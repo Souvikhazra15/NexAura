@@ -206,6 +206,9 @@ export default function SignalMonitoring() {
   const [historyData, setHistoryData] = useState<any[]>([]);
   const [tempZonesHistory, setTempZonesHistory] = useState<any[]>([]);
 
+  const [apiOnline, setApiOnline] = useState(true);
+  const [everLoaded, setEverLoaded] = useState(false);
+
   const [datasetStatus, setDatasetStatus] = useState<any>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -216,14 +219,23 @@ export default function SignalMonitoring() {
       try {
         const response = await fetch('http://localhost:8000/api/dataset/status');
         const result = await response.json();
+        setApiOnline(true);
+        if (result?.loaded) setEverLoaded(true);
         setDatasetStatus(result);
       } catch {
+        setApiOnline(false);
         setDatasetStatus(null);
       }
     };
 
     fetchDatasetStatus();
+    const interval = setInterval(fetchDatasetStatus, 3000);
+    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!apiOnline) setLoading(false);
+  }, [apiOnline]);
 
   useEffect(() => {
     const fetchSignals = async () => {
@@ -232,22 +244,33 @@ export default function SignalMonitoring() {
       try {
         const response = await fetch(url);
         const result = await response.json();
+        setApiOnline(true);
         setSignals(result.signals || []);
         setSelectedSignal((prev) => {
           if (prev && (result.signals || []).some((s: any) => s.id === prev)) return prev;
           return result.signals && result.signals.length > 0 ? result.signals[0].id : null;
         });
       } catch (error) {
+        setApiOnline(false);
         console.error('Failed to fetch signals:', error);
       } finally {
         setLoading(false);
       }
     };
 
+    if (!apiOnline) return;
+
+    // If no dataset is uploaded, keep gauges non-moving (fetch once only).
+    // If a dataset was loaded before but is now unloaded (common after backend restarts),
+    // freeze gauges by not overwriting live values with mock data.
+    if (!datasetStatus?.loaded && everLoaded) return;
+
     fetchSignals();
+    if (!datasetStatus?.loaded) return;
+
     const interval = setInterval(fetchSignals, 1000);
     return () => clearInterval(interval);
-  }, [datasetStatus?.loaded]);
+  }, [datasetStatus?.loaded, apiOnline, everLoaded]);
 
   const handleUpload = async () => {
     if (!uploadFile) return;
@@ -264,6 +287,8 @@ export default function SignalMonitoring() {
       if (!res.ok) {
         throw new Error(payload?.detail || 'Upload failed');
       }
+      setApiOnline(true);
+      setEverLoaded(true);
       setDatasetStatus(payload);
 
       // Refresh signals immediately after upload
@@ -283,6 +308,7 @@ export default function SignalMonitoring() {
 
   useEffect(() => {
     if (!selectedSignal) return;
+    if (!apiOnline) return;
 
     const isTempZone = /^TEMP_ZONE_[ABC]$/.test(selectedSignal);
     const tempZoneIds = ['TEMP_ZONE_A', 'TEMP_ZONE_B', 'TEMP_ZONE_C'];
@@ -325,14 +351,19 @@ export default function SignalMonitoring() {
           setTempZonesHistory([]);
         }
       } catch (error) {
+        setApiOnline(false);
         console.error('Failed to fetch history:', error);
       }
     };
 
     fetchHistory();
-    const interval = setInterval(fetchHistory, datasetStatus?.loaded ? 1000 : 5000);
+
+    // Keep charts/gauges non-moving until a dataset is uploaded.
+    if (!datasetStatus?.loaded) return;
+
+    const interval = setInterval(fetchHistory, 1000);
     return () => clearInterval(interval);
-  }, [selectedSignal, datasetStatus?.loaded]);
+  }, [selectedSignal, datasetStatus?.loaded, apiOnline]);
 
   if (loading) {
     return <div className="text-slate-400">Loading signals...</div>;
