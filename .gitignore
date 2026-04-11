@@ -1,1 +1,83 @@
-TranAD
+# 🚫 Ignored Folders (Large datasets, dev tools)
+TranAD/
+models/OmniAnamoly/OmniAnamoly/
+iot-anomaly-detection/backend/uploads/
+
+# 🐍 Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 🔧 Virtual Environments
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 📦 Node.js / npm
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# 🎯 IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+.DS_Store
+
+# 📊 Data & Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+*.pkl
+*.joblib
+
+# 📁 Temporary files
+*.tmp
+*.temp
+*.log
+*.pdf
+
+# 🔐 Secrets
+.env
+.env.local
+*.pem
+*.key
+id_rsa*
+*.pub
+
+# 🖼️ Images & Media (Keep CSVs, include images)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.webp
+
+# 📋 OS files
+.DS_Store
+Thumbs.db
+.gitkeep
