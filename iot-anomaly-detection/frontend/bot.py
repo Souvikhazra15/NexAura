@@ -9,7 +9,8 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import threading
 
-token: Final[str] = '8726859556:AAHmcsuLR6w5JMWawtVPJVh8VR-IYlex4s4'
+token: Final[str] = TOKEN
+
 bot_username: Final[str] = '@anamolyalert_bot'
 BACKEND_URL: Final[str] = 'http://localhost:8000'
 
