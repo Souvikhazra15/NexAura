@@ -69,6 +69,7 @@ export default function Home() {
         <DashboardOverview />
       </section>
 
+
       {/* Advanced Features Section */}
       <section className="mt-12">
         <h3 className="text-2xl font-bold mb-6">✨ Advanced Capabilities</h3>
@@ -140,41 +141,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mt-12 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-lg p-8 border border-cyan-500/20">
-        <h3 className="text-2xl font-bold mb-6">🏗️ Enterprise Architecture</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h4 className="font-semibold text-cyan-300 mb-3">Backend ML Pipeline</h4>
-            <ul className="text-sm text-slate-300 space-y-1">
-              <li>✓ FastAPI async framework</li>
-              <li>✓ Scikit-learn ML models</li>
-              <li>✓ TensorFlow ready</li>
-              <li>✓ Real-time WebSocket</li>
-              <li>✓ Horizontal scalability</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-cyan-300 mb-3">Frontend Dashboard</h4>
-            <ul className="text-sm text-slate-300 space-y-1">
-              <li>✓ Next.js 14 with SSR</li>
-              <li>✓ Recharts visualization</li>
-              <li>✓ Real-time updates</li>
-              <li>✓ Dark mode optimized</li>
-              <li>✓ Mobile responsive</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-cyan-300 mb-3">DevOps & Monitoring</h4>
-            <ul className="text-sm text-slate-300 space-y-1">
-              <li>✓ Local dev ready (Windows)</li>
-              <li>✓ Health check endpoints</li>
-              <li>✓ Performance metrics</li>
-              <li>✓ CORS configured</li>
-              <li>✓ Error tracking</li>
-            </ul>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

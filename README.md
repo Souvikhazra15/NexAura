@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # 🚀 NexAura: Enterprise-Grade Anomaly Detection Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -13,6 +13,7 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [WorkFlow](#-WorkFlow)
 - [Features](#-features)
 - [Architecture](#-architecture)
 - [Prerequisites](#-prerequisites)
@@ -46,6 +47,10 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 | **Docker Support** | ✓ Yes |
 
 ---
+
+## WorkFlow
+![WhatsApp Image 2026-04-11 at 9 12 14 AM](https://github.com/user-attachments/assets/bea37a02-b45e-4d5a-b383-823258a986a6)
+
 
 ## ✨ Features
 
