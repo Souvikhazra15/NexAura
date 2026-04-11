@@ -685,11 +685,14 @@ async def get_signal_history(signal_id: str, minutes: int = 60, live: bool = Fal
 
 @app.get("/api/correlation")
 async def get_correlation(top_n: int = 12, window: int = 2000, min_abs: float = 0.2):
-    """Return top correlated signal pairs from the currently uploaded dataset.
+    """Return correlation analysis for the currently uploaded dataset.
 
-    - If a device_type column exists, correlations are computed per device_type and the
-      results are merged and sorted by absolute correlation.
-    - If no dataset is loaded, this endpoint returns a 400 so the UI can fall back to mock.
+    This endpoint is used by the frontend correlation page. It returns:
+    - `matrix`: full Pearson correlation matrix across numeric columns
+    - `signals`: list of numeric column names (matrix axes)
+    - `items`: top correlated pairs (sorted by absolute correlation)
+
+    If no dataset is loaded, returns HTTP 400.
     """
     if not _dataset_loaded():
         raise HTTPException(status_code=400, detail="No dataset loaded")
@@ -704,6 +707,18 @@ async def get_correlation(top_n: int = 12, window: int = 2000, min_abs: float = 
     min_abs_val = float(min_abs)
 
     device_type_col = DATASET_STATE.get("device_type_col")
+
+    # Full correlation matrix (used by the heatmap UI)
+    view_all = df[numeric_cols]
+    if win and len(view_all) > win:
+        view_all = view_all.tail(win)
+    corr_all = view_all.corr(method="pearson", numeric_only=True)
+    if isinstance(corr_all, pd.DataFrame):
+        corr_all = corr_all.replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    signals = [str(c) for c in (corr_all.columns.tolist() if isinstance(corr_all, pd.DataFrame) else numeric_cols)]
+    matrix = (corr_all.round(4).to_dict() if isinstance(corr_all, pd.DataFrame) else {})
+
+    # Top-pair correlations (optionally per device_type)
     items: list[dict] = []
 
     # If device types exist, compute correlations per device_type for better signal meaning.
@@ -736,9 +751,13 @@ async def get_correlation(top_n: int = 12, window: int = 2000, min_abs: float = 
     items = items[:top]
 
     return {
+        "status": "success",
+        "signals": signals,
+        "matrix": matrix,
         "items": items,
         "source": "dataset",
         "filename": DATASET_STATE.get("filename"),
+        "shape": {"rows": int(len(df)), "columns": int(len(df.columns))},
         "window": win,
         "min_abs": min_abs_val,
         "device_type_col": device_type_col,
