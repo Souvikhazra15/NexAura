@@ -386,50 +386,26 @@ NexAura/
 │               └── EventTimeline.tsx
 │
 ├── models/                         ← Pre-trained & Analysis Models
-│   ├── IoT_sensor/
-│   │   ├── Iot.ipynb               ← IoT analysis notebook
-│   │   └── Production System Dataset.csv
-│   │
-│   ├── Nasa/                       ← (placeholder)
-│   │
-│   └── OmniAnamoly/                ← Comprehensive ML Pipeline
-│       ├── Comprehensive_Anomaly_Detection_Pipeline.ipynb
-│       ├── plant_sensor_data.csv
-│       ├── sample_data.csv
-│       ├── smart_system_anomaly_dataset.csv
-│       ├── Production System Dataset.csv
-│       ├── ec2_request_latency_system_failure.csv
-│       ├── LSTM_Detailed_Predictions.csv
-│       ├── Model_Evaluation_Metrics.csv
-│       ├── anomaly_detection_results_complete.csv
-│       └── OmniAnamoly/
-│           └── report.json
-│
-└── TranAD/                         ← Alternative ML Framework
-    ├── LICENSE
-    ├── README.md
-    ├── main.py
-    ├── preprocess.py
-    ├── requirements.txt
-    ├── src/
-    │   ├── constants.py
-    │   ├── diagnosis.py
-    │   ├── dlutils.py
-    │   ├── models.py
-    │   ├── parser.py
-    │   ├── plotting.py
-    │   └── ...
-    └── data/                       ← Various datasets
-        ├── FTSD/
-        ├── MBA/
-        ├── MSDS/
-        ├── NAB/
-        ├── SMAP_MSL/
-        ├── SMD/
-        ├── SWaT/
-        ├── synthetic/
-        ├── UCR/
-        └── WADI/
+   ├── IoT_sensor/
+   │   ├── Iot.ipynb               ← IoT analysis notebook
+   │   └── Production System Dataset.csv
+   │
+   ├── Nasa/                       ← (placeholder)
+   │
+   └── OmniAnamoly/                ← Comprehensive ML Pipeline
+       ├── Comprehensive_Anomaly_Detection_Pipeline.ipynb
+       ├── plant_sensor_data.csv
+       ├── sample_data.csv
+       ├── smart_system_anomaly_dataset.csv
+       ├── Production System Dataset.csv
+       ├── ec2_request_latency_system_failure.csv
+       ├── LSTM_Detailed_Predictions.csv
+       ├── Model_Evaluation_Metrics.csv
+       ├── anomaly_detection_results_complete.csv
+       └── OmniAnamoly/
+           └── report.json
+
+
 ```
 
 ### Key Directories Explained
