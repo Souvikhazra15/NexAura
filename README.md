@@ -49,7 +49,8 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 ---
 
 ## WorkFlow
-![WhatsApp Image 2026-04-11 at 9 12 14 AM](https://github.com/user-attachments/assets/bea37a02-b45e-4d5a-b383-823258a986a6)
+![WhatsApp Image 2026-04-11 at 09 28 58](https://github.com/user-attachments/assets/2063606e-e8cd-489c-90e9-d96970510246)
+
 
 
 ## ✨ Features
@@ -386,50 +387,26 @@ NexAura/
 │               └── EventTimeline.tsx
 │
 ├── models/                         ← Pre-trained & Analysis Models
-│   ├── IoT_sensor/
-│   │   ├── Iot.ipynb               ← IoT analysis notebook
-│   │   └── Production System Dataset.csv
-│   │
-│   ├── Nasa/                       ← (placeholder)
-│   │
-│   └── OmniAnamoly/                ← Comprehensive ML Pipeline
-│       ├── Comprehensive_Anomaly_Detection_Pipeline.ipynb
-│       ├── plant_sensor_data.csv
-│       ├── sample_data.csv
-│       ├── smart_system_anomaly_dataset.csv
-│       ├── Production System Dataset.csv
-│       ├── ec2_request_latency_system_failure.csv
-│       ├── LSTM_Detailed_Predictions.csv
-│       ├── Model_Evaluation_Metrics.csv
-│       ├── anomaly_detection_results_complete.csv
-│       └── OmniAnamoly/
-│           └── report.json
-│
-└── TranAD/                         ← Alternative ML Framework
-    ├── LICENSE
-    ├── README.md
-    ├── main.py
-    ├── preprocess.py
-    ├── requirements.txt
-    ├── src/
-    │   ├── constants.py
-    │   ├── diagnosis.py
-    │   ├── dlutils.py
-    │   ├── models.py
-    │   ├── parser.py
-    │   ├── plotting.py
-    │   └── ...
-    └── data/                       ← Various datasets
-        ├── FTSD/
-        ├── MBA/
-        ├── MSDS/
-        ├── NAB/
-        ├── SMAP_MSL/
-        ├── SMD/
-        ├── SWaT/
-        ├── synthetic/
-        ├── UCR/
-        └── WADI/
+   ├── IoT_sensor/
+   │   ├── Iot.ipynb               ← IoT analysis notebook
+   │   └── Production System Dataset.csv
+   │
+   ├── Nasa/                       ← (placeholder)
+   │
+   └── OmniAnamoly/                ← Comprehensive ML Pipeline
+       ├── Comprehensive_Anomaly_Detection_Pipeline.ipynb
+       ├── plant_sensor_data.csv
+       ├── sample_data.csv
+       ├── smart_system_anomaly_dataset.csv
+       ├── Production System Dataset.csv
+       ├── ec2_request_latency_system_failure.csv
+       ├── LSTM_Detailed_Predictions.csv
+       ├── Model_Evaluation_Metrics.csv
+       ├── anomaly_detection_results_complete.csv
+       └── OmniAnamoly/
+           └── report.json
+
+
 ```
 
 ### Key Directories Explained
@@ -2555,8 +2532,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 👥 Authors
 
-- **Project Lead:** [Your Name]
-- **Contributors:** [Names of contributors]
+- **Project Lead:** Zala Vishvarajsinh
+- **Contributors:** Souvik Hazra, Disha Bhatt, Hiren Vargiya, Het Dedania
 - **Built with:** FastAPI, Next.js, TensorFlow, Scikit-learn
 
 ---
