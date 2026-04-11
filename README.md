@@ -2531,8 +2531,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 👥 Authors
 
-- **Project Lead:** [Your Name]
-- **Contributors:** [Names of contributors]
+- **Project Lead:** Zala Vishvarajsinh
+- **Contributors:** Souvik Hazra, Disha Bhatt, Hiren Vargiya, Het Dedania
 - **Built with:** FastAPI, Next.js, TensorFlow, Scikit-learn
 
 ---
