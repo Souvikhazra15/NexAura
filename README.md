@@ -13,6 +13,7 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [WorkFlow](#-WorkFlow)
 - [Features](#-features)
 - [Architecture](#-architecture)
 - [Prerequisites](#-prerequisites)
