@@ -217,6 +217,13 @@ def _detect_timestamp_column(df: pd.DataFrame) -> Optional[str]:
             return str(col)
     # Fallback: any column that parses reasonably well
     for col in df.columns[: min(len(df.columns), 5)]:
+        # Avoid auto-selecting numeric signal columns as timestamps.
+        # pandas will happily interpret numbers as ns since epoch (1970...), which is rarely desired.
+        try:
+            if pd.api.types.is_numeric_dtype(df[col]):
+                continue
+        except Exception:
+            pass
         parsed = pd.to_datetime(df[col], errors="coerce", infer_datetime_format=True, utc=False)
         if parsed.notna().sum() > max(10, int(0.6 * len(df))):
             return str(col)
@@ -308,6 +315,63 @@ def _split_device_metric_signal_id(signal_id: str) -> Optional[tuple[str, str]]:
     if not left or not right:
         return None
     return left, right
+
+
+def _correlation_label(value: float) -> str:
+    try:
+        r = float(value)
+    except Exception:
+        return "Unknown"
+
+    a = abs(r)
+    if a >= 0.90:
+        strength = "Very Strong"
+    elif a >= 0.70:
+        strength = "Strong"
+    elif a >= 0.40:
+        strength = "Moderate"
+    elif a >= 0.20:
+        strength = "Weak"
+    else:
+        strength = "Very Weak"
+
+    direction = "Positive" if r >= 0 else "Negative"
+    return f"{strength} {direction}"
+
+
+def _top_correlation_pairs(
+    corr: pd.DataFrame,
+    top_n: int,
+    prefix: Optional[str] = None,
+    min_abs: float = 0.2,
+) -> list[dict]:
+    if not isinstance(corr, pd.DataFrame) or corr.empty:
+        return []
+
+    cols = [str(c) for c in corr.columns]
+    items: list[dict] = []
+    for i in range(len(cols)):
+        for j in range(i + 1, len(cols)):
+            a = cols[i]
+            b = cols[j]
+            try:
+                r = float(corr.loc[a, b])
+            except Exception:
+                continue
+            if not np.isfinite(r):
+                continue
+            if abs(r) < float(min_abs):
+                continue
+            left = f"{prefix}__{a}" if prefix else a
+            right = f"{prefix}__{b}" if prefix else b
+            items.append({
+                "signal1": f"{left} - {right}",
+                "correlation": round(float(r), 4),
+                "type": _correlation_label(r),
+            })
+
+    items.sort(key=lambda x: abs(float(x.get("correlation") or 0.0)), reverse=True)
+    return items[: max(0, int(top_n))]
 
 
 def _compute_signal_snapshot(
@@ -616,6 +680,68 @@ async def get_signal_history(signal_id: str, minutes: int = 60, live: bool = Fal
     return {
         "signal_id": signal_id,
         "history": sorted(history, key=lambda x: x["timestamp"])
+    }
+
+
+@app.get("/api/correlation")
+async def get_correlation(top_n: int = 12, window: int = 2000, min_abs: float = 0.2):
+    """Return top correlated signal pairs from the currently uploaded dataset.
+
+    - If a device_type column exists, correlations are computed per device_type and the
+      results are merged and sorted by absolute correlation.
+    - If no dataset is loaded, this endpoint returns a 400 so the UI can fall back to mock.
+    """
+    if not _dataset_loaded():
+        raise HTTPException(status_code=400, detail="No dataset loaded")
+
+    df = _get_dataset_df()
+    numeric_cols = list(DATASET_STATE.get("numeric_cols") or [])
+    if len(numeric_cols) < 2:
+        raise HTTPException(status_code=400, detail="Dataset has insufficient numeric columns for correlation")
+
+    win = max(0, int(window))
+    top = max(1, int(top_n))
+    min_abs_val = float(min_abs)
+
+    device_type_col = DATASET_STATE.get("device_type_col")
+    items: list[dict] = []
+
+    # If device types exist, compute correlations per device_type for better signal meaning.
+    if device_type_col and str(device_type_col) in df.columns:
+        try:
+            device_types = df[str(device_type_col)].dropna().unique().tolist()
+        except Exception:
+            device_types = []
+
+        for device_type_val in device_types:
+            if pd.isna(device_type_val):
+                continue
+            view = df.loc[df[str(device_type_col)] == device_type_val, numeric_cols]
+            if win and len(view) > win:
+                view = view.tail(win)
+            if len(view) < 10:
+                continue
+
+            corr = view.corr(method="pearson", numeric_only=True)
+            prefix = _sanitize_token(str(device_type_val))
+            items.extend(_top_correlation_pairs(corr, top_n=top, prefix=prefix, min_abs=min_abs_val))
+    else:
+        view = df[numeric_cols]
+        if win and len(view) > win:
+            view = view.tail(win)
+        corr = view.corr(method="pearson", numeric_only=True)
+        items = _top_correlation_pairs(corr, top_n=top, prefix=None, min_abs=min_abs_val)
+
+    items.sort(key=lambda x: abs(float(x.get("correlation") or 0.0)), reverse=True)
+    items = items[:top]
+
+    return {
+        "items": items,
+        "source": "dataset",
+        "filename": DATASET_STATE.get("filename"),
+        "window": win,
+        "min_abs": min_abs_val,
+        "device_type_col": device_type_col,
     }
 
 @app.get("/api/anomalies")

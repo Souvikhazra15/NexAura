@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ZoomIn, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface CorrelationMatrix {
@@ -26,10 +26,10 @@ export default function CorrelationAnalysis() {
   const [filename, setFilename] = useState<string>('');
   const [shape, setShape] = useState<{ rows: number; columns: number } | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUploadTime, setLastUploadTime] = useState<number>(0);
+  const datasetKeyRef = useRef<string>('');
+  const lastUploadTimeRef = useRef<number>(0);
 
   useEffect(() => {
-    // Initial fetch
     fetchCorrelationMatrix();
     
     // Listen for upload completion via localStorage
@@ -37,13 +37,32 @@ export default function CorrelationAnalysis() {
       const uploadTime = localStorage.getItem('lastUploadTime');
       if (uploadTime) {
         const newUploadTime = parseInt(uploadTime, 10);
-        if (newUploadTime > lastUploadTime) {
-          setLastUploadTime(newUploadTime);
+        if (newUploadTime > lastUploadTimeRef.current) {
+          lastUploadTimeRef.current = newUploadTime;
           // Delay slightly to ensure file is written to disk
           setTimeout(() => fetchCorrelationMatrix(), 500);
         }
       }
     };
+
+    // Also poll backend dataset status so Correlation updates when uploads happen
+    // from other pages (e.g., Signals page upload).
+    const checkDatasetStatus = async () => {
+      try {
+        const statusRes = await fetch('http://localhost:8000/api/dataset/status');
+        const status = await statusRes.json();
+        const nextKey = status?.loaded ? String(status?.filename || 'dataset') + '|' + String(status?.loaded_at || '') : '';
+        if (nextKey && nextKey !== datasetKeyRef.current) {
+          datasetKeyRef.current = nextKey;
+          setTimeout(() => fetchCorrelationMatrix(), 250);
+        }
+        if (!status?.loaded) datasetKeyRef.current = '';
+      } catch {
+        // ignore polling failures; main fetch shows error state
+      }
+    };
+
+    checkDatasetStatus();
 
     window.addEventListener('storage', handleStorageChange);
     
@@ -52,18 +71,19 @@ export default function CorrelationAnalysis() {
       const uploadTime = localStorage.getItem('lastUploadTime');
       if (uploadTime) {
         const newUploadTime = parseInt(uploadTime, 10);
-        if (newUploadTime > lastUploadTime) {
-          setLastUploadTime(newUploadTime);
+        if (newUploadTime > lastUploadTimeRef.current) {
+          lastUploadTimeRef.current = newUploadTime;
           setTimeout(() => fetchCorrelationMatrix(), 500);
         }
       }
+      checkDatasetStatus();
     }, 3000);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(interval);
     };
-  }, [lastUploadTime]);
+  }, []);
 
   const fetchCorrelationMatrix = async () => {
     try {
@@ -74,8 +94,8 @@ export default function CorrelationAnalysis() {
       const response = await fetch('http://localhost:8000/api/correlation');
       
       if (!response.ok) {
-        if (response.status === 404) {
-          setError('No CSV file uploaded yet. Upload a file to see correlations.');
+        if (response.status === 404 || response.status === 400) {
+          setError('No dataset uploaded yet. Upload a file (CSV / XLSX) to see correlations.');
         } else {
           const errorData = await response.json();
           setError(errorData.detail || 'Failed to fetch correlation data');
