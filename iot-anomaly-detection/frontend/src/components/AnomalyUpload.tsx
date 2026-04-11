@@ -119,6 +119,8 @@ const FileUploadComponent: React.FC = () => {
 
       if (response?.data?.status === 'success') {
         setResults(response.data);
+        // Notify CorrelationAnalysis component that a new file was uploaded
+        localStorage.setItem('lastUploadTime', Date.now().toString());
       } else if (response?.data?.error) {
         setError(`❌ Error: ${response?.data?.error}`);
       } else {

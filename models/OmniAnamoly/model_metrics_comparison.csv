@@ -1,0 +1,3 @@
+Model,Precision,Recall,F1-Score,Accuracy
+Z-Score,1.0,1.0,1.0,1.0
+Isolation Forest,0.3783783783783784,0.9859154929577465,0.546875,0.9496309161962657

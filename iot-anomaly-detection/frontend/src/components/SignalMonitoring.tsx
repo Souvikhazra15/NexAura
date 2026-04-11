@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, Play, Pause } from 'lucide-react';
 
 interface SignalData {
   id: string;
@@ -213,6 +213,9 @@ export default function SignalMonitoring() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  
+  // Signal monitoring streaming state
+  const [streamingActive, setStreamingActive] = useState(false);
 
   useEffect(() => {
     const fetchDatasetStatus = async () => {
@@ -303,6 +306,56 @@ export default function SignalMonitoring() {
       setUploadError(e?.message || 'Upload failed');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleStartStream = async () => {
+    setStreamingActive(true);
+    try {
+      // 1. Start signal streaming (detects anomalies)
+      console.log('📊 Starting signal monitoring...');
+      await fetch('http://localhost:8000/api/signals/stream');
+      
+      // 2. Reconnect backend
+      console.log('🔌 Connecting backend...');
+      await fetch('http://localhost:8000/api/signals/reconnect', { method: 'POST' });
+      
+      // 3. Enable bot alerts
+      console.log('🤖 Enabling bot alerts...');
+      try {
+        await fetch('http://localhost:3001/api/bot/start', { method: 'POST' });
+      } catch (error) {
+        console.log('Bot notification (non-critical):', error);
+      }
+      
+      console.log('✅ Real-time monitoring started - Cascade: Detection → Alerts (3s) → Bot (6s)');
+    } catch (error) {
+      console.error('Failed to start stream:', error);
+      setStreamingActive(false);
+    }
+  };
+
+  const handleStopStream = async () => {
+    setStreamingActive(false);
+    try {
+      console.log('⏹️ Stopping real-time monitoring...');
+      
+      // 1. Stop signal streaming
+      await fetch('http://localhost:8000/api/signals/stop', { method: 'POST' });
+      
+      // 2. Disconnect backend
+      await fetch('http://localhost:8000/api/signals/disconnect', { method: 'POST' });
+      
+      // 3. Stop bot alerts
+      try {
+        await fetch('http://localhost:3001/api/bot/stop', { method: 'POST' });
+      } catch (error) {
+        console.log('Bot notification (non-critical):', error);
+      }
+      
+      console.log('✅ Monitoring stopped');
+    } catch (error) {
+      console.error('Failed to stop stream:', error);
     }
   };
 
@@ -423,7 +476,28 @@ export default function SignalMonitoring() {
 
       {/* Signal Grid */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Active Signals</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">Active Signals</h3>
+          <div className="flex gap-2">
+            {!streamingActive ? (
+              <button
+                onClick={handleStartStream}
+                className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold transition-all duration-200"
+              >
+                <Play className="w-4 h-4" />
+                Start Stream
+              </button>
+            ) : (
+              <button
+                onClick={handleStopStream}
+                className="flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-semibold transition-all duration-200 animate-pulse"
+              >
+                <Pause className="w-4 h-4" />
+                Stop Stream
+              </button>
+            )}
+          </div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 max-h-[520px] overflow-y-auto">
           {signals.map((signal) => (
             <SignalGaugeTile
