@@ -49,7 +49,8 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 ---
 
 ## WorkFlow
-![WhatsApp Image 2026-04-11 at 9 12 14 AM](https://github.com/user-attachments/assets/bea37a02-b45e-4d5a-b383-823258a986a6)
+![WhatsApp Image 2026-04-11 at 09 28 58](https://github.com/user-attachments/assets/2063606e-e8cd-489c-90e9-d96970510246)
+
 
 
 ## ✨ Features
