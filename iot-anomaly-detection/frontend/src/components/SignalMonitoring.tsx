@@ -177,8 +177,10 @@ function SignalGaugeTile({
         </div>
 
         <div className="text-right text-xs text-slate-400">
-          <div className="text-base font-bold leading-none">{signal.current_value.toFixed(1)}</div>
-          <div className="mt-0.5">{signal.unit}</div>
+          <div className="text-base font-bold leading-none">
+            {typeof signal.current_value === 'number' ? signal.current_value.toFixed(1) : 'N/A'}
+          </div>
+          <div className="mt-0.5">{signal.unit || '-'}</div>
           <div className="mt-2 flex items-center justify-end gap-1">
             {signal.deviation_percent > 0 ? (
               <TrendingUp size={12} className="text-red-500" />

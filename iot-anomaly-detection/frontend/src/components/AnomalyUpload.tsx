@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Upload, AlertCircle, CheckCircle, Loader } from 'lucide-react';
-import AnomalyResults from './AnomalyResults';
+import AnomalyDashboard from './AnomalyDashboard';
 
 interface UploadResponse {
   status: string;
@@ -158,7 +158,7 @@ const FileUploadComponent: React.FC = () => {
   if (results) {
     return (
       <div className="space-y-4">
-        <AnomalyResults data={results} onReset={handleReset} />
+        <AnomalyDashboard data={results} onReset={handleReset} />
       </div>
     );
   }
