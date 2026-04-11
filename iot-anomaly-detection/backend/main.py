@@ -1,69 +1,62 @@
-from fastapi import FastAPI, WebSocket, HTTPException, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional, Dict
-import numpy as np
-import pandas as pd
-from datetime import datetime, timedelta
+"""
+FastAPI Backend - Anomaly Detection System
+Production-ready server with CSV upload, ML pipeline, and results API
+"""
+import os
+import logging
 import asyncio
-import json
 import random
 import re
 from collections import deque
+from datetime import datetime, timedelta
+from typing import List, Dict, Optional
 from io import BytesIO
+import pandas as pd
+import numpy as np
 
-app = FastAPI(title="IoT Anomaly Detection API")
+# Suppress TensorFlow warnings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
-# Enable CORS
+from fastapi import FastAPI, HTTPException, WebSocket, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from config.settings import CORS_ORIGINS, DEBUG
+from routes.anomaly import router as anomaly_router
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Create FastAPI app
+app = FastAPI(
+    title="Anomaly Detection API",
+    description="Production-grade ML pipeline for IoT anomaly detection",
+    version="1.0.0",
+)
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ============= Models =============
-class SignalReading(BaseModel):
-    timestamp: str
-    signal_id: str
-    value: float
-    unit: str
+# Include routers
+app.include_router(anomaly_router)
 
-class AnomalyAlert(BaseModel):
-    timestamp: str
-    anomaly_id: str
-    severity: str  # critical, warning, info
-    anomaly_type: str  # point, contextual, collective
-    contributing_signals: List[dict]
-    score: float
-    message: str
-    suggested_action: str
+# Create upload directory if it doesn't exist
+os.makedirs("uploads", exist_ok=True)
 
-class SignalMetrics(BaseModel):
-    signal_id: str
-    current_value: float
-    mean: float
-    std: float
-    min: float
-    max: float
-    status: str
-    history: List[float]
-
-class ModelPerformanceMetrics(BaseModel):
-    model_name: str
-    precision: float
-    recall: float
-    f1_score: float
-    false_positive_rate: float
-    avg_detection_time_ms: float
-
-class CorrelationMatrix(BaseModel):
-    signals: List[str]
-    correlations: List[List[float]]
 
 # ============= Global State =============
-signal_buffer = {}
+signal_buffer: Dict[str, deque] = {}
 anomaly_history = deque(maxlen=1000)
 models = {}
 scalers = {}
@@ -96,6 +89,30 @@ SIGNAL_CONFIGS = {
 
 for signal_id in SIGNAL_CONFIGS:
     signal_buffer[signal_id] = deque(maxlen=3600)  # Keep 1 hour of data at 1-second intervals
+
+
+# Global exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    """Handle unexpected errors"""
+    logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"status": "error", "detail": "Internal server error"}
+    )
+
+
+# Root endpoint
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "service": "Anomaly Detection API",
+        "version": "1.0.0",
+        "status": "running",
+        "docs": "/docs"
+    }
+
 
 # ============= Data Generator =============
 class MockAnomalyDetectionSystem:
