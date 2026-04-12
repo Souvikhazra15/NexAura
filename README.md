@@ -44,7 +44,6 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 | **Memory Efficient** | ✓ Batch processing |
 | **Real-time Capable** | ✓ Yes |
 | **Production Ready** | ✓ Yes |
-| **Docker Support** | ✓ Yes |
 
 ---
 
@@ -656,6 +655,12 @@ GET /redoc      → ReDoc (Alternative format)
 **Threshold:** 93rd percentile of max Z-scores
 **Complexity:** O(n)
 
+<img width="2385" height="1485" alt="image" src="https://github.com/user-attachments/assets/234e1ad7-78bb-4772-b6ae-cf47dc919216" />
+
+<img width="2383" height="1481" alt="image" src="https://github.com/user-attachments/assets/fb3d5c38-2802-43f9-abe5-4d256cf3961e" />
+
+
+
 **How it works:**
 ```
 1. Compute Z-scores: z = (x - mean) / std
@@ -687,6 +692,9 @@ GET /redoc      → ReDoc (Alternative format)
 **Type:** Multivariate (all features)
 **Contamination:** 7% (target anomaly rate)
 **Complexity:** O(n log n)
+
+<img width="2385" height="1485" alt="image" src="https://github.com/user-attachments/assets/944bf4d6-b851-4028-a0e5-6fc2c6caf39f" />
+
 
 **How it works:**
 ```
@@ -726,6 +734,12 @@ Input → Encoder (GRU 128→64→32) →
 **Type:** Deep learning temporal
 **Training:** Normal data only (unsupervised)
 **Complexity:** O(n²) for sequences
+
+<img width="2383" height="1473" alt="image" src="https://github.com/user-attachments/assets/6758cdbf-5cf7-4e40-ab69-50d665cae662" />
+
+<img width="2383" height="1473" alt="image" src="https://github.com/user-attachments/assets/29f83c28-cb60-4dca-953d-4f143681f173" />
+
+
 
 **How it works:**
 ```
