@@ -656,7 +656,8 @@ GET /redoc      → ReDoc (Alternative format)
 **Complexity:** O(n)
 
 <img width="2385" height="1485" alt="image" src="https://github.com/user-attachments/assets/234e1ad7-78bb-4772-b6ae-cf47dc919216" />
-<img width="2385" height="1485" alt="image" src="https://github.com/user-attachments/assets/8d417b42-7566-49a1-8920-50007286120f" />
+
+<img width="2383" height="1481" alt="image" src="https://github.com/user-attachments/assets/fb3d5c38-2802-43f9-abe5-4d256cf3961e" />
 
 
 
@@ -721,7 +722,7 @@ GET /redoc      → ReDoc (Alternative format)
 
 ---
 
-### 3. LSTM Autoencoder
+### 3. GRU Autoencoder
 
 **Architecture:**
 ```
@@ -733,6 +734,12 @@ Input → Encoder (LSTM 128→64→32) →
 **Type:** Deep learning temporal
 **Training:** Normal data only (unsupervised)
 **Complexity:** O(n²) for sequences
+
+<img width="2383" height="1473" alt="image" src="https://github.com/user-attachments/assets/6758cdbf-5cf7-4e40-ab69-50d665cae662" />
+
+<img width="2383" height="1473" alt="image" src="https://github.com/user-attachments/assets/29f83c28-cb60-4dca-953d-4f143681f173" />
+
+
 
 **How it works:**
 ```
