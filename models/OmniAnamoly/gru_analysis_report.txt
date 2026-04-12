@@ -1,0 +1,39 @@
+==========================================================================================
+GRU AUTOENCODER ANOMALY DETECTION - DETAILED ANALYSIS REPORT
+==========================================================================================
+
+MODEL ARCHITECTURE
+------------------------------------------------------------------------------------------
+Sequence Length: 30 timesteps
+Input Features: 11
+GRU Units (Encoder): 64 -> 32
+Bottleneck Dimension: 16
+Dropout Rate: 0.2
+Learning Rate: 0.001
+Total Parameters: 49,051
+
+TRAINING RESULTS
+------------------------------------------------------------------------------------------
+Epochs Trained: 88
+Final Training Loss: 0.782864
+Final Validation Loss: 0.795866
+Best Validation Loss: 0.777134
+
+ANOMALY DETECTION THRESHOLDS
+------------------------------------------------------------------------------------------
+Warning Threshold (90th %ile): 0.692754
+Critical Threshold (95th %ile): 0.713090
+
+PERFORMANCE METRICS
+------------------------------------------------------------------------------------------
+                  Accuracy  Precision  Recall  F1-Score  Specificity  Fallout
+Z-Score             0.9501     1.0000  0.3817    0.5525       1.0000   0.0000
+Isolation Forest    0.9996     1.0000  0.9946    0.9973       1.0000   0.0000
+GRU Autoencoder     0.6244     0.1146  0.5430    0.1893       0.6316   0.3684
+
+ANOMALY STATISTICS
+------------------------------------------------------------------------------------------
+GRU Normal samples: 1422 (61.75%)
+GRU Warning anomalies: 339 (14.72%)
+GRU Critical anomalies: 542 (23.53%)
+GRU Total anomalies: 881 (38.25%)

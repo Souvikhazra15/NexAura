@@ -3,13 +3,20 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 import requests
 import json
+import os
 from datetime import datetime, timedelta
 import asyncio
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import threading
+from dotenv import load_dotenv
 
-token: Final[str] = TOKEN
+# Load environment variables from .env.local
+load_dotenv('.env.local')
+
+bot_token: Final[str] = os.getenv('TOKEN', '').strip().strip("'\"")
+if not bot_token:
+    raise ValueError('TOKEN environment variable is not set in .env.local')
 
 bot_username: Final[str] = '@anamolyalert_bot'
 BACKEND_URL: Final[str] = 'http://localhost:8000'
@@ -343,7 +350,7 @@ if __name__ == '__main__':
     print('Starting bot...')
     
     # Create Telegram application
-    application = Application.builder().token(token).build()
+    application = Application.builder().token(bot_token).build()
     
     #Commands
     application.add_handler(CommandHandler('start', start_command))
