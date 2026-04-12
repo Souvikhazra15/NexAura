@@ -737,10 +737,6 @@ Input → Encoder (GRU 128→64→32) →
 
 <img width="2383" height="1473" alt="image" src="https://github.com/user-attachments/assets/6758cdbf-5cf7-4e40-ab69-50d665cae662" />
 
-<img width="2383" height="1473" alt="image" src="https://github.com/user-attachments/assets/29f83c28-cb60-4dca-953d-4f143681f173" />
-
-
-
 **How it works:**
 ```
 1. Train on normal data sequences
