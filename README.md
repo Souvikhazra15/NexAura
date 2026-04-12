@@ -39,7 +39,7 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 
 | Metric | Value |
 |--------|-------|
-| **Models Supported** | 3 (Z-Score, Isolation Forest, LSTM) |
+| **Models Supported** | 3 (Z-Score, Isolation Forest, GRU) |
 | **Processing Speed** | 10,000+ samples/second |
 | **Memory Efficient** | ✓ Batch processing |
 | **Real-time Capable** | ✓ Yes |
@@ -58,7 +58,7 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 ### 🔍 **Advanced Anomaly Detection**
 - **Z-Score Detection** - Fast statistical baseline (univariate)
 - **Isolation Forest** - Robust ensemble method (multivariate)
-- **LSTM Autoencoder** - Deep learning for temporal patterns
+- **GRU Autoencoder** - Deep learning for temporal patterns
 - **Consensus Voting** - Combined predictions for higher confidence
 
 ### 📊 **Rich Visualizations**
@@ -135,7 +135,7 @@ A **production-ready, full-stack machine learning platform** for detecting anoma
 │  │  ML Models (models/anomaly_models.py)               │   │
 │  │  • ZScoreDetector                                   │   │
 │  │  • IsolationForestDetector                          │   │
-│  │  • LSTMAutoencoder                                  │   │
+│  │  • GRUAutoencoder                                   │   │
 │  │  • MetricsComputer                                  │   │
 │  └──────────────┬───────────────────────────────────────┘   │
 │                 │                                             │
@@ -327,7 +327,7 @@ NexAura/
 │   │   │   └── anomaly_models.py    ← ML Models
 │   │   │       ├── ZScoreDetector
 │   │   │       ├── IsolationForestDetector
-│   │   │       ├── LSTMAutoencoder
+│   │   │       ├── GRUAutoencoder
 │   │   │       └── MetricsComputer
 │   │   │
 │   │   ├── services/
@@ -489,9 +489,9 @@ response = requests.post('http://localhost:8000/api/upload', files=files)
 
 # Parse results
 results = response.json()
-print(f"F1-Score: {results['lstm_metrics']['f1_score']:.4f}")
-print(f"Precision: {results['lstm_metrics']['precision']:.4f}")
-print(f"Recall: {results['lstm_metrics']['recall']:.4f}")
+print(f"F1-Score: {results['gru_metrics']['f1_score']:.4f}")
+print(f"Precision: {results['gru_metrics']['precision']:.4f}")
+print(f"Recall: {results['gru_metrics']['recall']:.4f}")
 
 # Save detailed predictions
 detailed = json.dumps(results['detailed_predictions'], indent=2)
@@ -519,7 +519,7 @@ results = detector.detect_anomalies(df_clean)
 # Access results
 print(f"Z-Score F1: {results['zscore_metrics']['f1_score']:.4f}")
 print(f"Isolation Forest F1: {results['isolation_forest_metrics']['f1_score']:.4f}")
-print(f"LSTM F1: {results['lstm_metrics']['f1_score']:.4f}")
+print(f"GRU F1: {results['gru_metrics']['f1_score']:.4f}")
 
 # Get anomaly indices
 anomalies = np.where(results['predictions'] > 0)[0]
@@ -572,7 +572,7 @@ curl -X POST -F "file=@sensor_data.csv" http://localhost:8000/api/upload
     "recall": 1.0,
     "accuracy": 0.9851
   },
-  "lstm_metrics": {
+  "gru_metrics": {
     "f1_score": 0.7245,
     "precision": 0.6821,
     "recall": 0.8914,
@@ -580,7 +580,7 @@ curl -X POST -F "file=@sensor_data.csv" http://localhost:8000/api/upload
   },
   "anomalies": [...],
   "predictions": [...],
-  "models_used": ["Z-Score", "Isolation Forest", "LSTM Autoencoder"]
+  "models_used": ["Z-Score", "Isolation Forest", "GRU Autoencoder"]
 }
 ```
 
@@ -602,7 +602,7 @@ curl http://localhost:8000/api/health
 {
   "status": "healthy",
   "backend": "FastAPI v0.104.1",
-  "models_loaded": ["ZScore", "IsolationForest", "LSTM"]
+  "models_loaded": ["ZScore", "IsolationForest", "GRU"]
 }
 ```
 
@@ -632,7 +632,7 @@ GET /redoc      → ReDoc (Alternative format)
     accuracy: number
   },
   isolation_forest_metrics: {...},
-  lstm_metrics: {...},
+  gru_metrics: {...},
   anomalies: number[],
   predictions: number[],
   detailed_predictions: {
@@ -640,7 +640,7 @@ GET /redoc      → ReDoc (Alternative format)
     value: number,
     zscore: number,
     iforest: number,
-    lstm: number
+    gru: number
   }[]
 }
 ```
@@ -714,11 +714,11 @@ GET /redoc      → ReDoc (Alternative format)
 
 ---
 
-### 3. LSTM Autoencoder
+### 3. GRU Autoencoder
 
 **Architecture:**
 ```
-Input → Encoder (LSTM 128→64→32) → 
+Input → Encoder (GRU 128→64→32) → 
          Decoder (32→64→128) → Output
 ```
 
@@ -955,7 +955,7 @@ python backend/main.py --sample
 
 #### Model Training Issues
 
-**Error:** `LSTM training not converging`
+**Error:** `GRU training not converging`
 ```python
 # Reduce sequence length
 seq_len = 20  # Default: 40
@@ -1014,7 +1014,7 @@ docker-compose logs --tail=100 -f backend
 - [Comprehensive Pipeline Notebook](models/OmniAnamoly/Comprehensive_Anomaly_Detection_Pipeline.ipynb)
 - [Z-Score Method](https://en.wikipedia.org/wiki/Standard_score)
 - [Isolation Forest Paper](https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/icdm08.pdf)
-- [LSTM Autoencoders](https://arxiv.org/abs/1506.02078)
+- [GRU (Gated Recurrent Unit) Overview](https://en.wikipedia.org/wiki/Gated_recurrent_unit)
 
 ### External Links
 
@@ -1137,6 +1137,5 @@ Test Coverage:           85%+
 
 For the latest version, visit: [GitHub Repository](https://github.com/yourrepo)
 
-Last Updated: April 2024
+Last Updated: April 2026
 Version: 1.0.0
-=======

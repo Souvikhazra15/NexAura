@@ -1,6 +1,6 @@
 # 🚀 Production-Ready Anomaly Detection System
 
-A complete full-stack machine learning pipeline for detecting anomalies in time-series sensor data. Features three complementary models (Z-Score, Isolation Forest, LSTM Autoencoder) with a professional React frontend and FastAPI backend.
+A complete full-stack machine learning pipeline for detecting anomalies in time-series sensor data. Features three complementary models (Z-Score, Isolation Forest, GRU Autoencoder) with a professional React frontend and FastAPI backend.
 
 ---
 
@@ -36,7 +36,7 @@ A complete full-stack machine learning pipeline for detecting anomalies in time-
 │  │ ML Models (models/anomaly_models.py)               │   │
 │  │  • ZScoreDetector                                  │   │
 │  │  • IsolationForestDetector                         │   │
-│  │  • LSTMAutoencoder                                 │   │
+│  │  • GRUAutoencoder                                  │   │
 │  │  • MetricsComputer                                 │   │
 │  └─────────────────────────────────────────────────────┘   │
 │                                                             │
@@ -62,7 +62,7 @@ backend/
 │   └── settings.py             # Configuration (model params, limits, etc)
 ├── models/
 │   ├── __init__.py
-│   └── anomaly_models.py       # Z-Score, IF, LSTM, Metrics
+│   └── anomaly_models.py       # Z-Score, IF, GRU, Metrics
 ├── services/
 │   ├── __init__.py
 │   ├── anomaly_service.py      # Core pipeline orchestrator
@@ -168,7 +168,7 @@ npm run dev
 - **Use case**: General-purpose, production-grade
 - **Status**: ✅ **RECOMMENDED** (F1~0.92)
 
-### 3. **LSTM Autoencoder** 🧠
+### 3. **GRU Autoencoder** 🧠
 - **Type**: Deep Learning (RNN)
 - **How it works**: 
   - Trains ONLY on normal data
@@ -275,12 +275,12 @@ Edit `backend/config/settings.py`:
 MAX_FILE_SIZE_MB = 50
 ALLOWED_EXTENSIONS = {'csv'}
 
-# LSTM parameters
+# GRU parameters
 SEQUENCE_LENGTH = 30        # Sliding window size
-LSTM_EPOCHS = 50           # Training iterations
-LSTM_BATCH_SIZE = 32       # Batch size
-LSTM_DROPOUT = 0.2         # Dropout for regularization
-LSTM_LEARNING_RATE = 0.001 # Adam optimizer LR
+GRU_EPOCHS = 50           # Training iterations
+GRU_BATCH_SIZE = 32       # Batch size
+GRU_DROPOUT = 0.2         # Dropout for regularization
+GRU_LEARNING_RATE = 0.001 # Adam optimizer LR
 
 # Model thresholds
 ZSCORE_THRESHOLD = 2.5                      # Standard deviations
@@ -333,7 +333,7 @@ npm run start
 1. **Upload CSV** → Drag & drop your sensor data
 2. **Validate** → Check file format, size, columns
 3. **Preprocess** → Clean missing values, scale data
-4. **Run Models** → Execute Z-Score, IF, LSTM in parallel
+4. **Run Models** → Execute Z-Score, IF, GRU in parallel
 5. **Generate Metrics** → Compute precision, recall, F1
 6. **Recommend** → Select best model
 7. **Visualize** → Show results with charts
@@ -351,7 +351,7 @@ npm run start
 ✅ **Three ML Models**
 - Statistical (Z-Score)
 - Ensemble (Isolation Forest) 
-- Deep Learning (LSTM)
+- Deep Learning (GRU)
 
 ✅ **Rich Dashboards**
 - Metrics comparison charts
@@ -395,8 +395,8 @@ uvicorn main:app --port 8001
 - Or increase RAM allocation
 - Process in batches
 
-### LSTM training too slow
-- Reduce `LSTM_EPOCHS` in settings.py
+### GRU training too slow
+- Reduce `GRU_EPOCHS` in settings.py
 - Reduce `SEQUENCE_LENGTH` 
 - Use GPU (install `tensorflow[and-cuda]`)
 
@@ -410,9 +410,9 @@ uvicorn main:app --port 8001
 |-------|-----------|--------|----------|-------|
 | Z-Score | 0.67 | 0.95 | 0.79 | ⚡ 1ms |
 | Isolation Forest | **1.0** | **0.86** | **0.92** | ⚡ 5ms |
-| LSTM Autoencoder | 0.13 | 0.26 | 0.18 | 🐢 500ms |
+| GRU Autoencoder | 0.13 | 0.26 | 0.18 | 🐢 500ms |
 
-**Recommendation**: Use **Isolation Forest** for production. LSTM may need dataset-specific tuning.
+**Recommendation**: Use **Isolation Forest** for production. GRU may need dataset-specific tuning.
 
 ---
 
