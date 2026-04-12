@@ -1,0 +1,8 @@
+Layer_Type,Activation_Function,Formula,Range,Purpose
+GRU Layer 1 (Encoder),ReLU,"max(0, x)","[0, ∞)",Feature extraction
+GRU Layer 2 (Encoder),ReLU,"max(0, x)","[0, ∞)",Feature compression
+Bottleneck,ReLU,"max(0, x)","[0, ∞)",Bottleneck encoding
+Output Layer,Linear,x,"(-∞, ∞)",Reconstruction output
+GRU Internal - Reset Gate,Sigmoid,1/(1+e^(-x)),"[0, 1]",Gate control
+GRU Internal - Update Gate,Sigmoid,1/(1+e^(-x)),"[0, 1]",Gate control
+GRU Internal - Candidate,Tanh,(e^x - e^(-x))/(e^x + e^(-x)),"[-1, 1]",Cell state update
